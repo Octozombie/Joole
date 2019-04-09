@@ -7,6 +7,7 @@ using Services;
 using JooleUI.Models;
 using System.Data;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace JooleUI.Controllers
 {
@@ -16,6 +17,41 @@ namespace JooleUI.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+
+        public ActionResult Summa()
+        {
+            return View();
+        }
+
+        public JsonResult Summ()
+        {
+            Service serv = new Service();
+            List<Products> va = new List<Products>();
+            for (int i = 1; i < 2; i++)
+            {
+                Products val = new Products();
+                var a = serv.value(i);
+                val.Product_Name = a.Product_Name;
+                val.Model = a.Model;
+                val.Series = a.Series;
+                val.Product_Image = a.Product_Image;
+                //JObject json = JObject.Parse(a.Characteristics);
+                val.Object = a.Characteristics;
+                //Response.Write(val.Object);
+                var b = serv.manudetails(a.Manufacturer_ID);
+                val.Manufacturer_Name = b.Manufacturer_Name;
+                var c = serv.typedetails(a.ProductTypeID);
+                val.UseType = c.UseType;
+                val.Application = c.Application;
+                val.ModelYear = c.ModelYear;
+                val.MountingLocation = c.MountingLocation;
+                va.Add(val);
+            }
+            var cha = JsonConvert.SerializeObject(va);
+            return Json(cha, JsonRequestBehavior.AllowGet);
+
         }
 
         public ActionResult Summary(string searchString, string beginningYear, string endingYear, int[] compare)
@@ -38,14 +74,12 @@ namespace JooleUI.Controllers
             var tde = serv.GetTypeDataSet(null).AsEnumerable();
             if (compare != null && compare.Length > 0)
             {
-                de = de.Where(id => compare.Contains(id.Product_ID));
-                foreach (var product in de)
-                {
-                    productList.Add(new ProductVM(product.Product_ID, product.Manufacturer_ID, product.SubCategory_ID,
-                        product.Product_Name, product.Series, product.Model, product.ProductTypeID, product.Characteristics));
-                }
-                return View("Compare", productList);
-                //return RedirectToAction("Compare", new {compare});
+                //var outs = JsonConvert.SerializeObject(Black(compare));
+                //return Json(outs, JsonRequestBehavior.AllowGet);
+                TempData["camp"] = compare;
+
+               // return View("Comps",Black(compare));
+               return RedirectToAction("Black","Home");
             }
 
             if (!String.IsNullOrEmpty(searchString))
@@ -87,25 +121,35 @@ namespace JooleUI.Controllers
             return View(productList);
         }
 
-        public ActionResult Compare()
-        {
-            return View();
-        }
-
-        public ActionResult Compare(int[] compare)
+        public List<Products> Black(int[] comp)
         {
             Service serv = new Service();
-            List<ProductVM> productList = new List<ProductVM>();
-            var de = serv.GetDataSet(null).AsEnumerable();
-            de = de.Where(id => compare.Contains(id.Product_ID));
-            foreach (var product in de)
+            List<Products> va = new List<Products>();
+            for (int i = 1; i < comp.Length; i++)
             {
-                productList.Add(new ProductVM(product.Product_ID, product.Manufacturer_ID, product.SubCategory_ID,
-                    product.Product_Name, product.Series, product.Model, product.ProductTypeID, product.Characteristics));
+                Products val = new Products();
+                var a = serv.value(comp[i]);
+                val.Product_Name = a.Product_Name;
+                val.Model = a.Model;
+                val.Series = a.Series;
+                val.Product_Image = a.Product_Image;
+                //JObject json = JObject.Parse(a.Characteristics);
+                val.Object = a.Characteristics;
+                //Response.Write(val.Object);
+                var b = serv.manudetails(a.Manufacturer_ID);
+                val.Manufacturer_Name = b.Manufacturer_Name;
+                var c = serv.typedetails(a.ProductTypeID);
+                val.UseType = c.UseType;
+                val.Application = c.Application;
+                val.ModelYear = c.ModelYear;
+                val.MountingLocation = c.MountingLocation;
+                va.Add(val);
             }
-            return View(productList);
-        }
+            //var outs = JsonConvert.SerializeObject(va);
+            //return Json(outs, JsonRequestBehavior.AllowGet);
+            return va;
 
+        }
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]

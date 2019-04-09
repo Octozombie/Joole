@@ -16,6 +16,95 @@ namespace Services
 
         UnitofWork uow = new UnitofWork(context);
 
+        /*
+         * This method will authenticate user information and check if they are valid or not
+         * return: true if the user existed, false otherwise
+         * args: uname - will take the login username
+         *       upass - will take the user password.
+         */
+        public bool authentication(string uname, string upass)
+        {
+            List<tblUser> fliteredList = filteredList(uname, upass);
+            if (fliteredList.Count > 0)
+            {
+                if (checker(uname) == "email")
+                {
+                    if (fliteredList.First().User_Email == uname && fliteredList.First().User_Password == upass)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (fliteredList.First().User_Name == uname && fliteredList.First().User_Password == upass)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }else
+            {
+                return false;
+            }
+        }
+        
+        /*
+         * This method will take username and email to perform the query and
+         * return filtered list based on the given paramenter
+         * return List<tblUser>
+         * args: uname - username or email
+         *       upass - password
+         */
+        private List<tblUser> filteredList(string uname, string upass)
+        {
+            tblUser temp = new tblUser();
+            if (checker(uname) == "email")
+            {
+                temp.User_Email = uname;
+                
+            }
+            else
+            {
+                temp.User_Name = uname;
+            }
+            temp.User_Password = upass;
+            return uow.users.find(temp).ToList();
+        }
+
+        /*
+         * This method will check if a given login name is email or username
+         * return: email - if it was an email
+         *         username - otherwise
+         * args: take a login name
+         */
+        private string checker(string loginName)
+        {
+            if (loginName.Contains("@"))
+            {
+                return "email";
+            }
+            else
+            {
+                return "username";
+            }
+        }
+
+        /*
+         * this method will return a userID based on the login name and the password given
+         * return: userID
+         */
+        public int getSessionID(string uname, string upass)
+        {
+            List<tblUser> fliteredList = filteredList(uname, upass);
+            return fliteredList.First().User_ID;
+        }
         public string Value()
         {
             var a = uow.users.Find(1);
@@ -56,7 +145,37 @@ namespace Services
         {
             return uow.products.DataSet(filter);
         }
+        public tblProduct value(int c)
+        {
 
+            var a = uow.products.Find(c);
+           
+            return a;
+        }
+
+        public tblManufacturer manudetails(int c)
+        {
+            var a = uow.manu.Find(c);
+
+            return a;
+        }
+
+        public tblType typedetails(int c)
+        {
+            var a = uow.prodtype.Find(c);
+
+            return a;
+        }
+
+        public List<tblCategory> getCategories()
+        {
+            return null;
+        }
+
+        public List<tblSubCategory> GetSubCategories()
+        {
+            return null;
+        }
         public IQueryable<tblType> GetTypeDataSet(string filter)
         {
             return uow.types.DataSet(filter);
