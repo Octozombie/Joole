@@ -56,7 +56,7 @@
     <form class="column left" style="background-color:ghostwhite">
         <div style="padding-bottom: 5px;border-top-style:solid; border-bottom-style: solid;border-right-style:solid; text-align: center;">Search: <input type="submit" class="btn btn-primary" value="Save"> <button class="btn btn-primary" id="clear">Clear</button></div>
         <div style="padding-top: 5px; padding-bottom: 5px; border-bottom-style: solid;border-right-style:solid; text-align: center;">Product | Project</div>
-        <div style="padding-top: 5px; padding-bottom: 5px; border-bottom-style: solid;border-right-style:solid;">Product Type</div>
+        <div style="padding-top: 5px; padding-bottom: 5px; border-bottom-style: solid;border-right-style:solid;">@Html.DropDownList("productType", (IEnumerable<SelectListItem>)ViewBag.ProductTypes, "Product Type")</div>
         <div style="padding-top: 5px; padding-bottom: 5px; border-bottom-style: solid; text-align: center;border-right-style:solid;">
             Model Year:
             <input type="text" name="beginningYear" maxlength="4" size="4"> - <input type="text" name="endingYear" maxlength="4" size="4">
@@ -73,28 +73,32 @@
             <input type="range" name="in" min="18" max="60">*@
         <p>
             <label for="airflow-amount">Airflow (CFM) </label><br />
-            <input type="text" id="airflow-amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="aamin" id="airflow-amount-min" readonly style="border:0; color:#f6931f; font-weight:bold;"> - 
+            <input type="text" name="aamax" id="airflow-amount-max" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div class="demo">
             <div id="airflow-slider"></div>
         </div>
         <p>
             <label for="power-amount">Max Power (W) </label><br />
-            <input type="text" id="power-amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="pamin" id="power-amount-min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="pamax" id="power-amount-max" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div class="demo">
             <div id="power-slider"></div>
         </div>
         <p>
             <label for="sound-amount">Sound at max speed (dBA)</label><br />
-            <input type="text" id="sound-amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="samin" id="sound-amount-min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="samax" id="sound-amount-max" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div class="demo">
             <div id="sound-slider"></div>
         </div>
         <p>
             <label for="sweep-amount">Fan sweep diameter (in) </label><br />
-            <input type="text" id="sweep-amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="swamin" id="sweep-amount-min" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <input type="text" name="swamax" id="sweep-amount-max" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div class="demo">
             <div id="sweep-slider"></div>
@@ -109,11 +113,12 @@
                     max: 90,
                     values: [10, 90],
                     slide: function (event, ui) {
-                        $("#airflow-amount").val(ui.values[0] + " - " + ui.values[1]);
+                        $("#airflow-amount-min").val(ui.values[0]);
+                        $("#airflow-amount-max").val(ui.values[1]);
                     }
                 });
-                $("#airflow-amount").val($("#airflow-slider").slider("values", 0) +
-                    " - " + $("#airflow-slider").slider("values", 1));
+                $("#airflow-amount-min").val($("#airflow-slider").slider("values", 0));
+                $("#airflow-amount-max").val($("#airflow-slider").slider("values", 1));
             });
             $(function () {
                 $("#power-slider").slider({
@@ -122,11 +127,12 @@
                     max: 65,
                     values: [10, 65],
                     slide: function (event, ui) {
-                        $("#power-amount").val(ui.values[0] + " - " + ui.values[1]);
+                        $("#power-amount-min").val(ui.values[0]);
+                        $("#power-amount-max").val(ui.values[1]);
                     }
                 });
-                $("#power-amount").val($("#power-slider").slider("values", 0) +
-                    " - " + $("#power-slider").slider("values", 1))
+                $("#power-amount-min").val($("#power-slider").slider("values", 0));
+                $("#power-amount-max").val($("#power-slider").slider("values", 1));
             });
             $(function () {
                 $("#sound-slider").slider({
@@ -135,11 +141,12 @@
                     max: 35,
                     values: [20, 35],
                     slide: function (event, ui) {
-                        $("#sound-amount").val(ui.values[0] + " - " + ui.values[1]);
+                        $("#sound-amount-min").val(ui.values[0]);
+                        $("#sound-amount-max").val(ui.values[1]);
                     }
                 });
-                $("#sound-amount").val($("#sound-slider").slider("values", 0) +
-                    " - " + $("#sound-slider").slider("values", 1));
+                $("#sound-amount-min").val($("#sound-slider").slider("values", 0));
+                $("#sound-amount-max").val($("#sound-slider").slider("values", 1));
             });
             $(function () {
                 $("#sweep-slider").slider({
@@ -148,11 +155,12 @@
                     max: 60,
                     values: [18, 60],
                     slide: function (event, ui) {
-                        $("#sweep-amount").val(ui.values[0] + " - " + ui.values[1]);
+                        $("#sweep-amount-min").val(ui.values[0]);
+                        $("#sweep-amount-max").val(ui.values[1]);
                     }
                 });
-                $("#sweep-amount").val($("#sweep-slider").slider("values", 0) +
-                    " - " + $("#sweep-slider").slider("values", 1));
+                $("#sweep-amount-min").val($("#sweep-slider").slider("values", 0));
+                $("#sweep-amount-max").val($("#sweep-slider").slider("values", 1));
             });
         </script>
     }

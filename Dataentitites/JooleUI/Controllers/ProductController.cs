@@ -19,7 +19,6 @@ namespace JooleUI.Controllers
             return View();
         }
 
-
         public ActionResult Summa()
         {
             return View();
@@ -54,7 +53,7 @@ namespace JooleUI.Controllers
 
         }
 
-        public ActionResult Summary(string searchString, string beginningYear, string endingYear, int[] compare)
+        public ActionResult Summary(string searchString, int? productType, string beginningYear, string endingYear, int[] compare)
         {
             Service serv = new Service();
             string vals = "";
@@ -70,8 +69,17 @@ namespace JooleUI.Controllers
             ViewBag.Message = vals;
 
             List <ProductVM> productList = new List<ProductVM>();
+            List<int> typeList = new List<int>();
             var de = serv.GetDataSet(null).AsEnumerable();
             var tde = serv.GetTypeDataSet(null).AsEnumerable();
+
+            foreach (var product in de)
+            {
+                typeList.Add(product.ProductTypeID);
+            }
+
+            ViewBag.ProductTypes = new SelectList(typeList);
+
             if (compare != null && compare.Length > 0)
             {
                 //var outs = JsonConvert.SerializeObject(Black(compare));
@@ -88,6 +96,14 @@ namespace JooleUI.Controllers
                 //de = serv.GetDataSet(searchString);
             }
 
+            if (productType > 0)
+            {
+                //System.Diagnostics.Debug.WriteLine(productType);
+                de = from p in de
+                     where p.ProductTypeID == productType
+                     select p;
+            }
+
             if (!String.IsNullOrEmpty(beginningYear) && !String.IsNullOrEmpty(endingYear))
             {
                 de = from p in de
@@ -95,6 +111,7 @@ namespace JooleUI.Controllers
                      where Convert.ToInt32(t.ModelYear) >= Convert.ToInt32(beginningYear)
                      && Convert.ToInt32(t.ModelYear) <= Convert.ToInt32(endingYear)
                      select p;
+                
             }
 
             else if (!String.IsNullOrEmpty(beginningYear))
