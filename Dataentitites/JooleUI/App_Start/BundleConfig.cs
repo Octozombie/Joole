@@ -14,7 +14,10 @@ namespace JooleUI
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                         "~/Scripts/jquery-ui-{version}.js"));
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> aa8c6ea1f1aea2cb5a985b646b09b712d9b512ab
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
